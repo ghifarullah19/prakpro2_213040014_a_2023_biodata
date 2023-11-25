@@ -26,7 +26,7 @@ public class ModelTable extends AbstractTableModel {
     public ModelTable(List<Biodata> data) {
         this.data = data;
     }
-    
+
     // Fungsi untuk menambah jumlah kolom
     public int getColumnCount() {
         // Kembalikan panjang/ukuran dari array columnNames
@@ -50,7 +50,7 @@ public class ModelTable extends AbstractTableModel {
         // Menyimpan elemen dari ArrayList data dari baris yang dipilih ke List rowItem
         Biodata rowItem = data.get(row);
         String value = "";
-        
+
         switch (col) {
             case 0:
                 value = rowItem.getNama();
@@ -65,7 +65,7 @@ public class ModelTable extends AbstractTableModel {
                 value = rowItem.getAlamat();
                 break;
         }
-        
+
         // Kembalikan elemen rowItem dari index col
         return value;
     }
@@ -73,7 +73,7 @@ public class ModelTable extends AbstractTableModel {
     // Fungsi untuk mengatur apakah cell bisa diedit atau tidak
     public boolean isCellEditable(int row, int col) {
         // Kembalikan nilai false
-        return row >=0 && col >= 0;
+        return false;
     }
 
     // Method untuk menambah nilai ke table
@@ -83,17 +83,30 @@ public class ModelTable extends AbstractTableModel {
         // Menambahkan elemen-elemen ArrayList data ke table
         fireTableRowsInserted(data.size() - 1, data.size() - 1);
     }
-    
+
     public void update(Biodata value) {
         int i = 0;
         for (Biodata b : data) {
             if (b.getId().equals(value.getId())) {
                 b = value;
-                data.set(i,value);
-                fireTableCellUpdated(data.size()-1,
-                data.size()-1);
+                data.set(i, value);
+                fireTableCellUpdated(data.size() - 1,
+                        data.size() - 1);
             }
             i++;
         }
+    }
+
+    public void delete(Biodata value) {
+        int i = 0;
+        for (Biodata b : data) {
+            if (b.getId().equals(value.getId())) {
+                data.remove(i);
+                break;
+            }
+            i++;
+        }
+        fireTableRowsDeleted(data.size() - 1,
+                data.size() - 1);
     }
 }

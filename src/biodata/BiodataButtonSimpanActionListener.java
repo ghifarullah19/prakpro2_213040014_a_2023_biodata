@@ -15,12 +15,12 @@ import dao.BiodataDao;
 public class BiodataButtonSimpanActionListener implements ActionListener {
     private final BiodataFrame biodataFrame;
     private final BiodataDao biodataDao;
-    
+
     public BiodataButtonSimpanActionListener(BiodataFrame biodataFrame, BiodataDao biodataDao) {
         this.biodataFrame = biodataFrame;
         this.biodataDao = biodataDao;
     }
-    
+
     public void actionPerformed(ActionEvent e) {
         String jenisKelamin = "";
 
@@ -77,13 +77,13 @@ public class BiodataButtonSimpanActionListener implements ActionListener {
         }
 
         // Variable confirmation untuk menyimpan nilai dari message dialog konfirmasi
-        int confirmation = this.biodataFrame.showConfirmation();
+        int confirmation = this.biodataFrame.showConfirmation("tambah");
 
         // Jika confirmation berinilai opsi yes
         if (confirmation == 0) {
             // Tambahkan variable nama, telepon, jenisKelamin, dan wna ke objek ArrayList
             // dan dikirim lagi ke objek tableModel dan dt melalui method add
-            
+
             Biodata biodata = new Biodata();
             biodata.setId(UUID.randomUUID().toString());
             biodata.setNama(nama);
@@ -95,13 +95,13 @@ public class BiodataButtonSimpanActionListener implements ActionListener {
             this.biodataDao.insert(biodata);
             // Tampilkan message dialog pada komponen dari parameter 1 dan pesan pada
             // parameter 2 dengan title pada parameter 3 dan jenis pesan pada parameter 4
-            this.biodataFrame.showAlertSuccess();
+            this.biodataFrame.showAlertSuccess("ditambahkan");
         }
         // Jika confirmation nilai opsi no
         else {
             // Tampilkan message dialog pada komponen dari parameter 1 dan pesan pada
             // parameter 2 dengan title pada parameter 3 dan jenis pesan pada parameter 4
-            this.biodataFrame.showAlertFailed();
+            this.biodataFrame.showAlertFailed("ditambahkan");
         }
         // Kembalikan isi textFieldNama ke kondisi kosong
         this.biodataFrame.getNamaTextField().setText("");

@@ -23,9 +23,9 @@ public class Main extends JFrame {
 
         this.biodataDao = new BiodataDao();
 
-        this.biodataFrame = new BiodataFrame(biodataDao);
+        biodataFrame = new BiodataFrame(biodataDao);
 
-        biodataFrame.setVisible(true);
+        showBiodataFrame();
     }
 
     public void showBiodataFrame() {
@@ -42,9 +42,7 @@ public class Main extends JFrame {
             // Override method run dari Runnable
             public void run() {
                 // Instansiasi StudiKasus dengan nama h
-                Main h = new Main();
-                // Tampilkan objek h dengan method setVisible dan parameternya true
-                biodataFrame.setVisible(true);
+                new Main();
             }
         });
     }

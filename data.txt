@@ -1,0 +1,7 @@
+Muhammad Lutfi,081222024097,Laki-Laki,Sarijadi
+Fauzi Ilyas,081234567891,Laki-Laki,Pangandaran
+Gilman Arief,081987654321,Laki-Laki,Cimenyan
+Fowaz Amran,081231987654,Laki-Laki,Cimahi
+Mohammad Deandra,081981234567,Laki-Laki,Cimahi
+Malwi Hidayat,084567123891,Laki-Laki,Bekasi
+Nayanika Salsa,087654891123,Perempuan,Malang

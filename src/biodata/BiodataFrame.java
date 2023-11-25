@@ -5,13 +5,16 @@
 package biodata;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 import dao.BiodataDao;
-import biodata.ModelTable;
-//import java.awt.HeadlessException;
-//import java.io.FileWriter;
-//import java.io.IOException;
-//import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
@@ -109,9 +112,9 @@ public class BiodataFrame extends JFrame {
         buttonHapus.setBounds(235, 380, 100, 40);
 
         // Instansiasi JButton dengan nama button yang diberikan nilai "Simpan"
-        JButton buttonFile = new JButton("Simpan ke File");
+        buttonSimpanUbah = new JButton("Simpan Ubah");
         // Atur ukuran panjang dan lebar serta posisi x dan y
-        buttonFile.setBounds(345, 380, 150, 40);
+        buttonSimpanUbah.setBounds(345, 380, 150, 40);
 
         // Instansiasi JTable dengan nama table
         table = new JTable();
@@ -128,179 +131,115 @@ public class BiodataFrame extends JFrame {
         tableModel = new ModelTable(biodataList);
         // Atur model dari table dengan objek tableModel
         table.setModel(tableModel);
-        
+
         // Instansiasi JButton dengan nama button yang diberikan nilai "Simpan"
-        buttonSimpanUbah = new JButton("Simpan Ubah");
+        JButton buttonFile = new JButton("Simpan ke File");
         // Atur ukuran panjang dan lebar serta posisi x dan y
-        buttonSimpanUbah.setBounds(345, 650, 150, 40);
+        buttonFile.setBounds(345, 650, 150, 40);
 
         // Menambahkan action listener ke button
-        BiodataButtonSimpanActionListener actionListener = new BiodataButtonSimpanActionListener(this,
-                        biodataDao);
-        button.addActionListener(actionListener);
-        
-        BiodataButtonUbahActionListener actionListener2 = new BiodataButtonUbahActionListener(this,
-                        biodataDao);
-        buttonUbah.addActionListener(actionListener2);
-        
-        // Menambahkan action listener ke button ubah
-//        buttonUbah.addActionListener(new ActionListener() {
-//            // Method untuk menerima event
-//            public void actionPerformed(ActionEvent e) {
-//                // Jika table sedang diedit dan user mengklik button ubah
-//                if (table.isEditing()) {
-//                    // Hentikan editing pada table
-//                    table.getCellEditor().stopCellEditing();
-//                }
-//
-//                // Variable row untuk menyimpan nilai baris yang dipilih
-//                int row = table.getSelectedRow();
-//                // Variable column untuk menyimpan nilai kolom yang dipilih
-//                int column = table.getSelectedColumn();
-//                // Variable newValue untuk menyimpan nilai dari table yang diedit
-//                String newValue = (String) table.getModel().getValueAt(row, column);
-//
-//                // Variable confirmation untuk menyimpan nilai dari message dialog konfirmasi
-//                int confirmation = JOptionPane.showConfirmDialog(BiodataFrame.this,
-//                        "Apakah anda yakin ingin mengubah data?",
-//                        "Form Biodata",
-//                        JOptionPane.YES_NO_OPTION);
-//
-//                // Jika confirmation bernilai opsi yes
-//                if (confirmation == JOptionPane.YES_OPTION) {
-//                    // Ubah nilai dari tableModel dan dt dengan nilai newValue pada baris dan kolom
-//                    // yang dipilih
-//                    tableModel.setValueAt(newValue, row, column);
-//                    dt.setDataRow(row, column, newValue);
-//                    // Tampilkan message dialog pada komponen dari parameter 1 dan pesan pada
-//                    // parameter 2 dengan title pada parameter 3 dan jenis pesan pada parameter 4
-//                    JOptionPane.showMessageDialog(BiodataFrame.this, "Data berhasil diubah", "Perhatian",
-//                            JOptionPane.INFORMATION_MESSAGE);
-//                } else {
-//                    // Jika batal diubah, kembalikan nilai dari tableModel dan dt ke kondisi semula
-//                    for (int i = 0; i < dt.getSize(row); i++) {
-//                        tableModel.setValueAt(dt.getData(row, i),
-//                                row,
-//                                i);
-//                    }
-//                }
-//            }
-//        });
+        BiodataButtonSimpanActionListener simpanListener = new BiodataButtonSimpanActionListener(this,
+                biodataDao);
+        button.addActionListener(simpanListener);
 
-        // Menambahkan action listener ke button hapus
-//        buttonHapus.addActionListener(new ActionListener() {
-//            // Method untuk menerima event
-//            public void actionPerformed(ActionEvent e) {
-//                // Variable row untuk menyimpan nilai baris yang dipilih
-//                int row = table.getSelectedRow();
-//                // Variable confirmation untuk menyimpan nilai dari message dialog konfirmasi
-//                int confirmation = JOptionPane.showConfirmDialog(BiodataFrame.this,
-//                        "Apakah anda yakin ingin menghapus data?",
-//                        "Form Biodata",
-//                        JOptionPane.YES_NO_OPTION);
-//
-//                // Jika confirmation bernilai opsi yes
-//                if (confirmation == JOptionPane.YES_OPTION) {
-//                    // Hapus baris yang dipilih dari tableModel dan dt
-//                    tableModel.remove(row);
-//                    dt.remove(row);
-//
-//                    // Tampilkan message dialog pada komponen dari parameter 1 dan pesan pada
-//                    // parameter 2 dengan title pada parameter 3 dan jenis pesan pada parameter 4
-//                    JOptionPane.showMessageDialog(BiodataFrame.this, "Data berhasil dihapus", "Perhatian",
-//                            JOptionPane.INFORMATION_MESSAGE);
-//                }
-//            }
-//        });
+        BiodataButtonUbahActionListener ubahListener = new BiodataButtonUbahActionListener(this,
+                biodataDao);
+        buttonUbah.addActionListener(ubahListener);
+
+        BiodataButtonHapusActionListener hapusListener = new BiodataButtonHapusActionListener(this,
+                biodataDao);
+        buttonHapus.addActionListener(hapusListener);
 
         // Menambahkan action listener ke button file
-//        buttonFile.addActionListener(new ActionListener() {
-//            // Method untuk menerima event
-//            public void actionPerformed(ActionEvent e) {
-//                // Variable confirmation untuk menyimpan nilai dari message dialog konfirmasi
-//                int confirmation = JOptionPane.showConfirmDialog(BiodataFrame.this,
-//                        "Apakah anda yakin ingin menyimpan data ke file?",
-//                        "Form Biodata",
-//                        JOptionPane.YES_NO_OPTION);
-//
-//                // Jika confirmation bernilai opsi yes
-//                if (confirmation == JOptionPane.YES_OPTION) {
-//                    // Instansiasi JFileChooser dengan nama fileChooser
-//                    JFileChooser fileChooser = new JFileChooser();
-//                    // Atur title dari fileChooser
-//                    fileChooser.setDialogTitle("Simpan Data ke File");
-//                    // Atur filter dari fileChooser
-//                    fileChooser.setFileFilter(new FileNameExtensionFilter("File Teks", "txt"));
-//                    // Variable userSelection untuk menyimpan nilai dari fileChooser
-//                    int userSelection = fileChooser.showSaveDialog(BiodataFrame.this);
-//
-//                    // Jika userSelection bernilai opsi approve
-//                    if (userSelection == JFileChooser.APPROVE_OPTION) {
-//                        try {
-//                            // Instansiasi FileWriter dengan nama writer
-//                            FileWriter writer = new FileWriter("data.txt");
-//
-//                            // Dapatkan data dari baris dt
-//                            for (int i = 0; i < dt.getSizeAll(); i++) {
-//                                // Dapatkan data dari kolom dt
-//                                for (int j = 0; j < dt.getSize(i); j++) {
-//                                    if (j == 3) {
-//                                        // Tulis data dari dt ke file, jika j == 3 maka tambahkan baris baru
-//                                        writer.write(dt.getData(i, j).toString() + "\n");
-//                                    } else {
-//                                        // Tulis data dari dt ke file, jika j != 3 maka tambahkan koma
-//                                        writer.write(dt.getData(i, j).toString() + ",");
-//                                    }
-//                                }
-//                            }
-//
-//                            // Tutup file
-//                            writer.close();
-//
-//                            // Tampilkan message dialog pada komponen dari parameter 1 dan pesan pada
-//                            // parameter 2 dengan title pada parameter 3 dan jenis pesan pada parameter 4
-//                            JOptionPane.showMessageDialog(BiodataFrame.this, "Data berhasil disimpan ke file",
-//                                    "Perhatian",
-//                                    JOptionPane.INFORMATION_MESSAGE);
-//                        } catch (IOException ex) {
-//                            // Tampilkan error pada console
-//                            ex.printStackTrace();
-//                        }
-//                    }
-//                }
-//            }
-//        });
+        buttonFile.addActionListener(new ActionListener() {
+            // Method untuk menerima event
+            public void actionPerformed(ActionEvent e) {
+                // Variable confirmation untuk menyimpan nilai dari message dialog konfirmasi
+                int confirmation = JOptionPane.showConfirmDialog(BiodataFrame.this,
+                        "Apakah anda yakin ingin menyimpan data ke file?",
+                        "Form Biodata",
+                        JOptionPane.YES_NO_OPTION);
+
+                // Jika confirmation bernilai opsi yes
+                if (confirmation == JOptionPane.YES_OPTION) {
+                    // Instansiasi JFileChooser dengan nama fileChooser
+                    JFileChooser fileChooser = new JFileChooser();
+                    // Atur title dari fileChooser
+                    fileChooser.setDialogTitle("Simpan Data ke File");
+                    // Atur filter dari fileChooser
+                    fileChooser.setFileFilter(new FileNameExtensionFilter("File Teks", "txt"));
+                    // Variable userSelection untuk menyimpan nilai dari fileChooser
+                    int userSelection = fileChooser.showSaveDialog(BiodataFrame.this);
+
+                    // Jika userSelection bernilai opsi approve
+                    if (userSelection == JFileChooser.APPROVE_OPTION) {
+                        try {
+                            // Instansiasi FileWriter dengan nama writer
+                            FileWriter writer = new FileWriter("data.txt");
+
+                            // Dapatkan data dari baris dt
+                            for (int i = 0; i < biodataList.size(); i++) {
+                                // Dapatkan data dari kolom dt
+                                if (i == biodataList.size() - 1) {
+                                    // Tulis data dari dt ke file, jika j == 3 maka tambahkan baris baru
+                                    System.out.print(
+                                            biodataList.get(i).getNama() + "," + biodataList.get(i).getNoTelepon() + " "
+                                                    + biodataList.get(i).getJenisKelamin() + ","
+                                                    + biodataList.get(i).getAlamat());
+                                    writer.write(biodataList.get(i).getNama() + ",");
+                                    writer.write(biodataList.get(i).getNoTelepon() + ",");
+                                    writer.write(biodataList.get(i).getJenisKelamin() + ",");
+                                    writer.write(biodataList.get(i).getAlamat());
+                                } else {
+                                    // Tulis data dari dt ke file, jika j != 3 maka tambahkan koma
+                                    System.out.print(
+                                            biodataList.get(i).getNama() + "," + biodataList.get(i).getNoTelepon() + ","
+                                                    + biodataList.get(i).getJenisKelamin() + ","
+                                                    + biodataList.get(i).getAlamat() + "\n");
+                                    writer.write(biodataList.get(i).getNama() + ",");
+                                    writer.write(biodataList.get(i).getNoTelepon() + ",");
+                                    writer.write(biodataList.get(i).getJenisKelamin() + ",");
+                                    writer.write(biodataList.get(i).getAlamat() + "\n");
+                                }
+                            }
+
+                            // Tutup file
+                            writer.close();
+
+                            // Tampilkan message dialog pada komponen dari parameter 1 dan pesan pada
+                            // parameter 2 dengan title pada parameter 3 dan jenis pesan pada parameter 4
+                            JOptionPane.showMessageDialog(BiodataFrame.this, "Data berhasil disimpan ke file",
+                                    "Perhatian",
+                                    JOptionPane.INFORMATION_MESSAGE);
+                        } catch (IOException ex) {
+                            // Tampilkan error pada console
+                            ex.printStackTrace();
+                        }
+                    }
+                }
+            }
+        });
 
         // Menambahkan window listener ke frame
-//        this.addWindowListener(new WindowAdapter() {
-//            // Override method windowClosing dari WindowAdapter
-//            public void windowClosing(WindowEvent e) {
-//                // Variable confirmation untuk menyimpan nilai dari message dialog konfirmasi
-//                int confirmation = JOptionPane.showConfirmDialog(BiodataFrame.this,
-//                        "Apakah anda yakin ingin keluar aplikasi?\nSemua data yang belum disimpan, tidak akan tersimpan.",
-//                        "Form Biodata",
-//                        JOptionPane.YES_NO_OPTION);
-//
-//                // Jika confirmation bernilai opsi yes
-//                if (confirmation == JOptionPane.YES_OPTION) {
-//                    // Dapatkan data dari baris tableModel
-//                    for (int i = 0; i < tableModel.getRowCount(); i++) {
-//                        // Dapatkan data dari kolom tableModel
-//                        for (int j = 0; j < tableModel.getColCount(i); j++) {
-//                            // Tulis data dari tableModel dari dt
-//                            tableModel.setValueAt(dt.getData(i, j),
-//                                    i,
-//                                    j);
-//                        }
-//                    }
-//                    // Keluar dari aplikasi
-//                    System.exit(0);
-//                } else {
-//                    // Jika batal keluar, kembalikan frame ke kondisi semula
-//                    setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-//                }
-//            }
-//        });
+        this.addWindowListener(new WindowAdapter() {
+            // Override method windowClosing dari WindowAdapter
+            public void windowClosing(WindowEvent e) {
+                // Variable confirmation untuk menyimpan nilai dari message dialog konfirmasi
+                int confirmation = JOptionPane.showConfirmDialog(BiodataFrame.this,
+                        "Apakah anda yakin ingin keluar aplikasi?\nSemua data yang belum disimpan, tidak akan tersimpan.",
+                        "Form Biodata",
+                        JOptionPane.YES_NO_OPTION);
+
+                // Jika confirmation bernilai opsi yes
+                if (confirmation == JOptionPane.YES_OPTION) {
+                    // Keluar dari aplikasi
+                    System.exit(0);
+                } else {
+                    // Jika batal keluar, kembalikan frame ke kondisi semula
+                    setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+                }
+            }
+        });
 
         // Menambahkan objek labelHeader ke frame
         this.add(labelHeader);
@@ -340,94 +279,99 @@ public class BiodataFrame extends JFrame {
         // Atur layout frame menjadi null
         this.setLayout(null);
     }
-    
+
     public String getNama() {
         return textFieldNama.getText();
     }
-    
+
     public JTextField getNamaTextField() {
         return textFieldNama;
     }
-    
+
     public String getNoTelepon() {
         return textFieldHP.getText();
     }
-    
+
     public JTextField getNoTeleponTextField() {
         return textFieldHP;
     }
-    
+
     public JRadioButton getJenisLaki() {
         return jenisLaki;
     }
-    
+
     public JRadioButton getJenisPerempuan() {
         return jenisPerempuan;
     }
-    
+
     public String getAlamat() {
         return txtOutput.getText();
     }
-    
+
     public JTextArea getAlamatTextField() {
         return txtOutput;
     }
-    
-    public JButton getButtonSimpanUbah() {
-        return buttonSimpanUbah;
-    }
-    
+
     public ModelTable getTableModel() {
         return this.tableModel;
     }
-    
+
     public JTable getTable() {
         return this.table;
     }
-    
+
+    public JButton getButtonSimpanUbah() {
+        return this.buttonSimpanUbah;
+    }
+
     public void addBiodata(Biodata biodata) {
         tableModel.add(biodata);
         textFieldNama.setText("");
     }
-    
+
     public void updateBiodata(Biodata biodata) {
         tableModel.update(biodata);
         textFieldNama.setText("");
     }
-    
+
+    public void deleteBiodata(Biodata biodata) {
+        tableModel.delete(biodata);
+        textFieldNama.setText("");
+    }
+
     public void showAlertAllEmpty() {
         JOptionPane.showMessageDialog(BiodataFrame.this, "Nama, telepon dan alamat belum terisi", "Perhatian",
-                    JOptionPane.WARNING_MESSAGE);
+                JOptionPane.WARNING_MESSAGE);
     }
-    
+
     public void showAlertNameEmpty() {
         JOptionPane.showMessageDialog(BiodataFrame.this, "Nama belum terisi", "Perhatian",
-                        JOptionPane.WARNING_MESSAGE);
+                JOptionPane.WARNING_MESSAGE);
     }
-    
+
     public void showAlertTelephoneEmpty() {
         JOptionPane.showMessageDialog(BiodataFrame.this, "Telepon belum terisi", "Perhatian",
-                        JOptionPane.WARNING_MESSAGE);
+                JOptionPane.WARNING_MESSAGE);
     }
-    
+
     public void showAlertAddressEmpty() {
         JOptionPane.showMessageDialog(BiodataFrame.this, "Alamat belum terisi", "Perhatian",
-                        JOptionPane.WARNING_MESSAGE);
+                JOptionPane.WARNING_MESSAGE);
     }
-    
-    public void showAlertSuccess() {
-        JOptionPane.showMessageDialog(BiodataFrame.this, "Data tersimpan", "Perhatian",
-                    JOptionPane.INFORMATION_MESSAGE);
+
+    public void showAlertSuccess(String message) {
+        JOptionPane.showMessageDialog(BiodataFrame.this, "Data " + message, "Perhatian",
+                JOptionPane.INFORMATION_MESSAGE);
     }
-    
-    public void showAlertFailed() {
-        JOptionPane.showMessageDialog(BiodataFrame.this, "Data tidak tersimpan", "Perhatian",
-                    JOptionPane.ERROR_MESSAGE);
+
+    public void showAlertFailed(String message) {
+        JOptionPane.showMessageDialog(BiodataFrame.this, "Data " + message, "Perhatian",
+                JOptionPane.ERROR_MESSAGE);
     }
-    
-    public int showConfirmation() {
+
+    public int showConfirmation(String message) {
         return JOptionPane.showConfirmDialog(BiodataFrame.this,
-                "Apakah anda yakin ingin menyimpan data?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
+                "Apakah anda yakin ingin " + message + " data?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
     }
-    
+
 }
