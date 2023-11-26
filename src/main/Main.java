@@ -4,9 +4,13 @@
  */
 package main;
 
+import java.util.List;
+
 import javax.swing.*;
 import dao.BiodataDao;
 import biodata.BiodataFrame;
+import biodata.Biodata;
+import biodata.ModelTable;
 
 /**
  *
@@ -15,6 +19,8 @@ import biodata.BiodataFrame;
 public class Main extends JFrame {
     private final BiodataDao biodataDao;
     private static BiodataFrame biodataFrame;
+    private List<Biodata> biodataList;
+    private JButton refresh;
 
     public Main() {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -23,16 +29,36 @@ public class Main extends JFrame {
 
         this.biodataDao = new BiodataDao();
 
-        biodataFrame = new BiodataFrame(biodataDao);
+        refresh = new JButton("Refresh");
+        refresh.setBounds(15, 650, 100, 40);
+        refresh.addActionListener(e -> {
+            showBiodataFrame();
+        });
 
+        biodataFrame = new BiodataFrame(biodataDao);
+        
         showBiodataFrame();
+
+        biodataFrame.add(refresh);
     }
 
     public void showBiodataFrame() {
-        if (biodataFrame == null) {
-            biodataFrame = new BiodataFrame(biodataDao);
-        }
+        biodataFrame.setVisible(false);
+        this.biodataList = this.biodataDao.findAll();
+        biodataFrame = new BiodataFrame(biodataDao);
+        biodataFrame.getTable().setModel(new ModelTable(this.biodataList));
+        biodataFrame.add(refresh);
         biodataFrame.setVisible(true);
+
+        System.out.println("Table refreshed: ");
+        if (biodataList.isEmpty()) {
+            System.out.println("Table is empty");
+        } else {
+            for (Biodata biodata : biodataList) {
+                System.out.println(biodata.getNama() + " " + biodata.getNoTelepon() + " " + biodata.getJenisKelamin() + " " + biodata.getAlamat());
+            }
+        }
+        System.out.println();
     }
 
     public static void main(String[] args) {
