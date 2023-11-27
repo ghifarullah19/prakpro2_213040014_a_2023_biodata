@@ -4,61 +4,34 @@
  */
 package main;
 
-import java.util.List;
-
 import javax.swing.*;
 import dao.BiodataDao;
 import biodata.BiodataFrame;
-import biodata.Biodata;
-import biodata.ModelTable;
 
 /**
  *
  * @author ghifarullah19
  */
+
+// Class Main untuk menjalankan program
 public class Main extends JFrame {
-    private final BiodataDao biodataDao;
-    private static BiodataFrame biodataFrame;
-    private List<Biodata> biodataList;
-    private JButton refresh;
+    private final BiodataDao biodataDao; // Variable biodataDao untuk menyimpan nilai biodataDao
+    private final BiodataFrame biodataFrame; // Variable biodataFrame untuk menyimpan nilai biodataFrame
 
+    // Constructor Main
     public Main() {
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        // Set judul dari frame
+        this.setTitle("Biodata");
 
+        // Set ukuran dari frame
         this.setSize(400, 500);
-
-        this.biodataDao = new BiodataDao();
-
-        refresh = new JButton("Refresh");
-        refresh.setBounds(15, 650, 100, 40);
-        refresh.addActionListener(e -> {
-            showBiodataFrame();
-        });
-
-        biodataFrame = new BiodataFrame(biodataDao);
         
-        showBiodataFrame();
+        // Inisialisasi nilai dari biodataDao dan biodataFrame
+        this.biodataDao = new BiodataDao();
+        this.biodataFrame = new BiodataFrame(biodataDao);
 
-        biodataFrame.add(refresh);
-    }
-
-    public void showBiodataFrame() {
-        biodataFrame.setVisible(false);
-        this.biodataList = this.biodataDao.findAll();
-        biodataFrame = new BiodataFrame(biodataDao);
-        biodataFrame.getTable().setModel(new ModelTable(this.biodataList));
-        biodataFrame.add(refresh);
-        biodataFrame.setVisible(true);
-
-        System.out.println("Table refreshed: ");
-        if (biodataList.isEmpty()) {
-            System.out.println("Table is empty");
-        } else {
-            for (Biodata biodata : biodataList) {
-                System.out.println(biodata.getNama() + " " + biodata.getNoTelepon() + " " + biodata.getJenisKelamin() + " " + biodata.getAlamat());
-            }
-        }
-        System.out.println();
+        // Set frame agar tidak dapat di resize
+        this.biodataFrame.setVisible(true);
     }
 
     public static void main(String[] args) {

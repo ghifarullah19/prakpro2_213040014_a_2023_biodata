@@ -2,36 +2,44 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package biodata;
+package actionlistener;
 
 import java.awt.event.*;
 import java.util.UUID;
+
+import biodata.Biodata;
+import biodata.BiodataFrame;
 import dao.BiodataDao;
 
 /**
  *
  * @author ghifarullah19
  */
-public class BiodataButtonSimpanActionListener implements ActionListener {
-    private final BiodataFrame biodataFrame;
-    private final BiodataDao biodataDao;
 
-    public BiodataButtonSimpanActionListener(BiodataFrame biodataFrame, BiodataDao biodataDao) {
+// Implementasi ActionListener untuk button Simpan
+public class SimpanActionListener implements ActionListener {
+    private final BiodataFrame biodataFrame; // Variable biodataFrame untuk menyimpan nilai biodataFrame
+    private final BiodataDao biodataDao; // Variable biodataDao untuk menyimpan nilai biodataDao
+
+    // Constructor SimpanActionListener
+    public SimpanActionListener(BiodataFrame biodataFrame, BiodataDao biodataDao) {
+        // Inisialisasi nilai dari biodataFrame dan biodataDao
         this.biodataFrame = biodataFrame;
         this.biodataDao = biodataDao;
     }
 
     public void actionPerformed(ActionEvent e) {
+        // Variable jenisKelamin untuk menyimpan nilai dari objek jenisLaki atau jenisPerempuan
         String jenisKelamin = "";
 
-        // Jika radioButton1 diklik
+        // Jika jenisLaki diklik
         if (biodataFrame.getJenisLaki().isSelected()) {
             // Maka jenisKelamin akan bernilai Laki-Laki
             jenisKelamin = biodataFrame.getJenisLaki().getText();
             // Kembalikan radio button ke kondisi semula
             biodataFrame.getJenisLaki().setSelected(false);
         }
-        // Jika radioButton2 diklik
+        // Jika jenisPerempuan diklik
         if (biodataFrame.getJenisPerempuan().isSelected()) {
             // Maka jenisKelamin akan bernilai Perempuan
             jenisKelamin = biodataFrame.getJenisPerempuan().getText();
@@ -48,29 +56,25 @@ public class BiodataButtonSimpanActionListener implements ActionListener {
 
         // Jika nama, telepon dan alamat bernilai kosong
         if (nama.equalsIgnoreCase("") && telepon.equalsIgnoreCase("") && alamat.equalsIgnoreCase("")) {
-            // Tampilkan message dialog pada komponen dari parameter 1 dan pesan pada
-            // parameter 2 dengan title pada parameter 3 dan jenis pesan pada parameter 4
+            // Panggil method showAlertAllEmpty pada biodataFrame
             this.biodataFrame.showAlertAllEmpty();
             return;
         } else {
             // Jika nama bernilai kosong
             if (nama.equalsIgnoreCase("")) {
-                // Tampilkan message dialog pada komponen dari parameter 1 dan pesan pada
-                // parameter 2 dengan title pada parameter 3 dan jenis pesan pada parameter 4
+                // Panggil method showAlertNameEmpty pada biodataFrame
                 this.biodataFrame.showAlertNameEmpty();
                 return;
             }
             // Jika telepon bernilai kosong
             if (telepon.equalsIgnoreCase("")) {
-                // Tampilkan message dialog pada komponen dari parameter 1 dan pesan pada
-                // parameter 2 dengan title pada parameter 3 dan jenis pesan pada parameter 4
+                // Panggil method showAlertTelephoneEmpty pada biodataFrame
                 this.biodataFrame.showAlertTelephoneEmpty();
                 return;
             }
             // Jika alamat bernilai kosong
             if (alamat.equalsIgnoreCase("")) {
-                // Tampilkan message dialog pada komponen dari parameter 1 dan pesan pada
-                // parameter 2 dengan title pada parameter 3 dan jenis pesan pada parameter 4
+                // Panggil method showAlertAddressEmpty pada biodataFrame
                 this.biodataFrame.showAlertAddressEmpty();
                 return;
             }
@@ -81,26 +85,30 @@ public class BiodataButtonSimpanActionListener implements ActionListener {
 
         // Jika confirmation berinilai opsi yes
         if (confirmation == 0) {
-            // Tambahkan variable nama, telepon, jenisKelamin, dan wna ke objek ArrayList
-            // dan dikirim lagi ke objek tableModel dan dt melalui method add
-
+            // Instansiasi objek biodata dengan nama biodata
             Biodata biodata = new Biodata();
+
+            // Set id biodata dengan nilai random
             biodata.setId(UUID.randomUUID().toString());
+            // Set nama biodata dengan nilai dari variable nama
             biodata.setNama(nama);
+            // Set telepon biodata dengan nilai dari variable telepon
             biodata.setNoTelepon(telepon);
+            // Set jenisKelamin biodata dengan nilai dari variable jenisKelamin
             biodata.setJenisKelamin(jenisKelamin);
+            // Set alamat biodata dengan nilai dari variable alamat
             biodata.setAlamat(alamat);
 
+            // Tambahkan biodata ke objek biodataFrame dan biodataDao
             this.biodataFrame.addBiodata(biodata);
             this.biodataDao.insert(biodata);
-            // Tampilkan message dialog pada komponen dari parameter 1 dan pesan pada
-            // parameter 2 dengan title pada parameter 3 dan jenis pesan pada parameter 4
+
+            // Panggil method showAlertSuccess pada biodataFrame dengan parameter "ditambahkan"
             this.biodataFrame.showAlertSuccess("ditambahkan");
         }
         // Jika confirmation nilai opsi no
         else {
-            // Tampilkan message dialog pada komponen dari parameter 1 dan pesan pada
-            // parameter 2 dengan title pada parameter 3 dan jenis pesan pada parameter 4
+            // Panggil method showAlertFailed pada biodataFrame dengan parameter "ditambahkan"
             this.biodataFrame.showAlertFailed("ditambahkan");
         }
         // Kembalikan isi textFieldNama ke kondisi kosong

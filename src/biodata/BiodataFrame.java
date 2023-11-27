@@ -5,38 +5,36 @@
 package biodata;
 
 import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.*;
 import dao.BiodataDao;
+import actionlistener.HapusActionListener;
+import actionlistener.SimpanActionListener;
+import actionlistener.UbahActionListener;
+import actionlistener.CloseWindowActionListener;
+import actionlistener.SaveToFileActionListener;
 
 /**
  *
  * @author ghifarullah19
  */
 public class BiodataFrame extends JFrame {
-    private final List<Biodata> biodataList;
-    private final JTextField textFieldNama;
-    private final JTextField textFieldHP;
-    private final JRadioButton jenisLaki;
-    private final JRadioButton jenisPerempuan;
-    private final JTextArea txtOutput;
-    private final ModelTable tableModel;
-    private final JTable table;
-    private final JButton buttonSimpanUbah;
-    private final BiodataDao biodataDao;
+    private List<Biodata> biodataList; // Variable biodataList untuk menyimpan biodata
+    private final JTextField textFieldNama; // Variable textFieldNama untuk menyimpan input nama
+    private final JTextField textFieldHP; // Variable textFieldTelepon untuk menyimpan input telepon
+    private final JRadioButton jenisLaki; // Variable jenisLaki untuk menyimpan input laki-laki
+    private final JRadioButton jenisPerempuan; // Variable jenisPerempuan untuk menyimpan input perempuan
+    private final JTextArea txtOutput; // Variable txtOutput untuk menyimpan input alamat
+    private final ModelTable tableModel; // Variable tableModel untuk menyimpan tableModel
+    private final JTable table; // Variable table untuk menyimpan table
+    private final JButton buttonSimpanUbah; // Variable buttonSimpanUbah untuk menangani simpan ubah
+    private final BiodataDao biodataDao; // Variable biodataDao untuk menyimpan biodataDao
 
     public BiodataFrame(BiodataDao biodataDao) {
+        // Inisialisasi biodataDao dengan biodataDao
         this.biodataDao = biodataDao;
+        // Inisialisasi biodataList dengan biodataDao.findAll()
         this.biodataList = this.biodataDao.findAll();
-        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
+        
         // Instansiasi JLabel dengan nama labelNama yang diberikan nilai "Form Biodata:"
         // dan diletakan di tengah frame
         JLabel labelHeader = new JLabel("Form Biodata", JLabel.CENTER);
@@ -101,7 +99,7 @@ public class BiodataFrame extends JFrame {
         // Atur ukuran panjang dan lebar serta posisi x dan y
         button.setBounds(15, 380, 100, 40);
 
-        // Instansiasi JButton dengan nama button yang diberikan nilai "Simpan"
+        // Instansiasi JButton dengan nama buttonUbah yang diberikan nilai "Ubah"
         JButton buttonUbah = new JButton("Ubah");
         // Atur ukuran panjang dan lebar serta posisi x dan y
         buttonUbah.setBounds(125, 380, 100, 40);
@@ -111,10 +109,21 @@ public class BiodataFrame extends JFrame {
         // Atur ukuran panjang dan lebar serta posisi x dan y
         buttonHapus.setBounds(235, 380, 100, 40);
 
-        // Instansiasi JButton dengan nama button yang diberikan nilai "Simpan"
+        // Instansiasi JButton dengan nama buttonSimpanUbah yang diberikan nilai "Simpan Ubah"
         buttonSimpanUbah = new JButton("Simpan Ubah");
         // Atur ukuran panjang dan lebar serta posisi x dan y
         buttonSimpanUbah.setBounds(345, 380, 150, 40);
+
+        // Instansiasi JButton dengan nama refresh yang diberikan nilai "Refresh"
+        JButton refresh = new JButton("Refresh");
+        // Atur ukuran panjang dan lebar serta posisi x dan y
+        refresh.setBounds(15, 650, 100, 40);
+
+        // Menambahkan action listener ke button refresh
+        refresh.addActionListener(e -> {
+            // Panggil method refreshBiodataTable
+            refreshBiodataTable();
+        });
 
         // Instansiasi JTable dengan nama table
         table = new JTable();
@@ -137,109 +146,33 @@ public class BiodataFrame extends JFrame {
         // Atur ukuran panjang dan lebar serta posisi x dan y
         buttonFile.setBounds(345, 650, 150, 40);
 
+        // Instansiasi SimpanActionListener dengan nama simpanListener
+        SimpanActionListener simpanListener = new SimpanActionListener(this,
+        biodataDao);
         // Menambahkan action listener ke button
-        BiodataButtonSimpanActionListener simpanListener = new BiodataButtonSimpanActionListener(this,
-                biodataDao);
         button.addActionListener(simpanListener);
 
-        BiodataButtonUbahActionListener ubahListener = new BiodataButtonUbahActionListener(this,
+        // Instansiasi UbahActionListener dengan nama ubahListener
+        UbahActionListener ubahListener = new UbahActionListener(this,
                 biodataDao);
+        // Menambahkan action listener ke buttonUbah
         buttonUbah.addActionListener(ubahListener);
 
-        BiodataButtonHapusActionListener hapusListener = new BiodataButtonHapusActionListener(this,
+        // Instansiasi HapusActionListener dengan nama hapusListener
+        HapusActionListener hapusListener = new HapusActionListener(this,
                 biodataDao);
+        // Menambahkan action listener ke buttonHapus
         buttonHapus.addActionListener(hapusListener);
 
+        // Instansiasi SaveToFileActionListener dengan nama saveToFileListener
+        SaveToFileActionListener saveToFileListener = new SaveToFileActionListener(this, biodataList);
         // Menambahkan action listener ke button file
-        buttonFile.addActionListener(new ActionListener() {
-            // Method untuk menerima event
-            public void actionPerformed(ActionEvent e) {
-                // Variable confirmation untuk menyimpan nilai dari message dialog konfirmasi
-                int confirmation = JOptionPane.showConfirmDialog(BiodataFrame.this,
-                        "Apakah anda yakin ingin menyimpan data ke file?",
-                        "Form Biodata",
-                        JOptionPane.YES_NO_OPTION);
+        buttonFile.addActionListener(saveToFileListener);
 
-                // Jika confirmation bernilai opsi yes
-                if (confirmation == JOptionPane.YES_OPTION) {
-                    // Instansiasi JFileChooser dengan nama fileChooser
-                    JFileChooser fileChooser = new JFileChooser();
-                    // Atur title dari fileChooser
-                    fileChooser.setDialogTitle("Simpan Data ke File");
-                    // Atur filter dari fileChooser
-                    fileChooser.setFileFilter(new FileNameExtensionFilter("File Teks", "txt"));
-                    // Variable userSelection untuk menyimpan nilai dari fileChooser
-                    int userSelection = fileChooser.showSaveDialog(BiodataFrame.this);
-
-                    // Jika userSelection bernilai opsi approve
-                    if (userSelection == JFileChooser.APPROVE_OPTION) {
-                        try {
-                            // Instansiasi FileWriter dengan nama writer
-                            FileWriter writer = new FileWriter("data.txt");
-
-                            // Dapatkan data dari baris dt
-                            for (int i = 0; i < biodataList.size(); i++) {
-                                // Dapatkan data dari kolom dt
-                                if (i == biodataList.size() - 1) {
-                                    // Tulis data dari dt ke file, jika j == 3 maka tambahkan baris baru
-                                    System.out.print(
-                                            biodataList.get(i).getNama() + "," + biodataList.get(i).getNoTelepon() + " "
-                                                    + biodataList.get(i).getJenisKelamin() + ","
-                                                    + biodataList.get(i).getAlamat());
-                                    writer.write(biodataList.get(i).getNama() + ",");
-                                    writer.write(biodataList.get(i).getNoTelepon() + ",");
-                                    writer.write(biodataList.get(i).getJenisKelamin() + ",");
-                                    writer.write(biodataList.get(i).getAlamat());
-                                } else {
-                                    // Tulis data dari dt ke file, jika j != 3 maka tambahkan koma
-                                    System.out.print(
-                                            biodataList.get(i).getNama() + "," + biodataList.get(i).getNoTelepon() + ","
-                                                    + biodataList.get(i).getJenisKelamin() + ","
-                                                    + biodataList.get(i).getAlamat() + "\n");
-                                    writer.write(biodataList.get(i).getNama() + ",");
-                                    writer.write(biodataList.get(i).getNoTelepon() + ",");
-                                    writer.write(biodataList.get(i).getJenisKelamin() + ",");
-                                    writer.write(biodataList.get(i).getAlamat() + "\n");
-                                }
-                            }
-
-                            // Tutup file
-                            writer.close();
-
-                            // Tampilkan message dialog pada komponen dari parameter 1 dan pesan pada
-                            // parameter 2 dengan title pada parameter 3 dan jenis pesan pada parameter 4
-                            JOptionPane.showMessageDialog(BiodataFrame.this, "Data berhasil disimpan ke file",
-                                    "Perhatian",
-                                    JOptionPane.INFORMATION_MESSAGE);
-                        } catch (IOException ex) {
-                            // Tampilkan error pada console
-                            ex.printStackTrace();
-                        }
-                    }
-                }
-            }
-        });
-
+        // Instansiasi CloseWindowActionListener dengan nama closeWindowListener
+        CloseWindowActionListener closeWindowListener = new CloseWindowActionListener(this);
         // Menambahkan window listener ke frame
-        this.addWindowListener(new WindowAdapter() {
-            // Override method windowClosing dari WindowAdapter
-            public void windowClosing(WindowEvent e) {
-                // Variable confirmation untuk menyimpan nilai dari message dialog konfirmasi
-                int confirmation = JOptionPane.showConfirmDialog(BiodataFrame.this,
-                        "Apakah anda yakin ingin keluar aplikasi?\nSemua data yang belum disimpan, tidak akan tersimpan.",
-                        "Form Biodata",
-                        JOptionPane.YES_NO_OPTION);
-
-                // Jika confirmation bernilai opsi yes
-                if (confirmation == JOptionPane.YES_OPTION) {
-                    // Keluar dari aplikasi
-                    System.exit(0);
-                } else {
-                    // Jika batal keluar, kembalikan frame ke kondisi semula
-                    setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-                }
-            }
-        });
+        this.addWindowListener(closeWindowListener);
 
         // Menambahkan objek labelHeader ke frame
         this.add(labelHeader);
@@ -271,6 +204,7 @@ public class BiodataFrame extends JFrame {
         this.add(buttonFile);
         // Menambahkan objek scrollableTable ke frame
         this.add(scrollableTable);
+        this.add(refresh);
         // Menambahkan objek buttonUbah ke frame
         this.add(buttonSimpanUbah);
 
@@ -280,96 +214,162 @@ public class BiodataFrame extends JFrame {
         this.setLayout(null);
     }
 
+    // Method untuk mendapatkan nilai dari textFieldNama
     public String getNama() {
+        // Kembalikan nilai dari textFieldNama
         return textFieldNama.getText();
     }
 
+    // Method untuk mendapatkan textFieldNama
     public JTextField getNamaTextField() {
+        // Kembalikan nilai dari textFieldNama
         return textFieldNama;
     }
 
+    // Method untuk mendapatkan nilai dari textFieldTelepon
     public String getNoTelepon() {
+        // Kembalikan nilai dari textFieldTelepon
         return textFieldHP.getText();
     }
 
+    // Method untuk mendapatkan textFieldTelepon
     public JTextField getNoTeleponTextField() {
+        // Kembalikan nilai dari textFieldTelepon
         return textFieldHP;
     }
 
+    // Method untuk mendapatkan nilai dari radioButton1
     public JRadioButton getJenisLaki() {
+        // Kembalikan nilai dari radioButton1
         return jenisLaki;
     }
 
+    // Method untuk mendapatkan nilai dari radioButton2
     public JRadioButton getJenisPerempuan() {
+        // Kembalikan nilai dari radioButton2
         return jenisPerempuan;
     }
 
+    // Method untuk mendapatkan nilai dari txtOutput
     public String getAlamat() {
+        // Kembalikan nilai dari txtOutput
         return txtOutput.getText();
     }
 
+    // Method untuk mendapatkan txtOutput
     public JTextArea getAlamatTextField() {
+        // Kembalikan nilai dari txtOutput
         return txtOutput;
     }
 
+    // Method untuk mendapatkan tableModel
     public ModelTable getTableModel() {
+        // Kembalikan nilai dari tableModel
         return this.tableModel;
     }
 
+    // Method untuk mendapatkan table
     public JTable getTable() {
+        // Kembalikan nilai dari table
         return this.table;
     }
 
+    // Method untuk mendapatkan buttonSimpanUbah
     public JButton getButtonSimpanUbah() {
+        // Kembalikan buttonSimpanUbah
         return this.buttonSimpanUbah;
     }
 
+    // Method untuk menambahkan biodata ke tableModel
     public void addBiodata(Biodata biodata) {
+        // Tambahkan biodata ke tableModel
         tableModel.add(biodata);
+        // Kembalikan isi textFieldNama ke kondisi kosong
         textFieldNama.setText("");
+        // Kembalikan isi textFieldTelepon ke kondisi kosong
+        textFieldHP.setText("");
+        // Kembalikan isi textarea ke kondisi kosong
+        txtOutput.setText("");
     }
 
+    // Method untuk mengubah biodata ke tableModel
     public void updateBiodata(Biodata biodata) {
+        // Tambahkan biodata ke tableModel
         tableModel.update(biodata);
+        // Kembalikan isi textFieldNama ke kondisi kosong
         textFieldNama.setText("");
+        // Kembalikan isi textFieldTelepon ke kondisi kosong
+        textFieldHP.setText("");
+        // Kembalikan isi textarea ke kondisi kosong
+        txtOutput.setText("");
     }
 
+    // Method untuk menghapus biodata ke tableModel
     public void deleteBiodata(Biodata biodata) {
+        // Tambahkan biodata ke tableModel
         tableModel.delete(biodata);
-        textFieldNama.setText("");
     }
 
+    public void refreshBiodataTable() {
+        this.biodataList = this.biodataDao.findAll();
+        this.getTable().setModel(new ModelTable(this.biodataList));
+
+        System.out.println("Table refreshed: ");
+        if (biodataList.isEmpty()) {
+            System.out.println("Table is empty");
+        } else {
+            for (Biodata biodata : biodataList) {
+                System.out.println(biodata.getNama() + " " + biodata.getNoTelepon() + " " + biodata.getJenisKelamin() + " " + biodata.getAlamat());
+            }
+        }
+        System.out.println();
+    }
+
+    // Method untuk menampilkan alert ketika nama, telepon dan alamat kosong
     public void showAlertAllEmpty() {
+        // Tampilkan message dialog pada komponen dari parameter 1 dan pesan pada parameter 2 dengan title pada parameter 3 dan jenis pesan pada parameter 4
         JOptionPane.showMessageDialog(BiodataFrame.this, "Nama, telepon dan alamat belum terisi", "Perhatian",
                 JOptionPane.WARNING_MESSAGE);
     }
 
+    // Method untuk menampilkan alert ketika nama kosong
     public void showAlertNameEmpty() {
+        // Tampilkan message dialog pada komponen dari parameter 1 dan pesan pada parameter 2 dengan title pada parameter 3 dan jenis pesan pada parameter 4
         JOptionPane.showMessageDialog(BiodataFrame.this, "Nama belum terisi", "Perhatian",
                 JOptionPane.WARNING_MESSAGE);
     }
 
+    // Method untuk menampilkan alert ketika telepon kosong
     public void showAlertTelephoneEmpty() {
+        // Tampilkan message dialog pada komponen dari parameter 1 dan pesan pada parameter 2 dengan title pada parameter 3 dan jenis pesan pada parameter 4
         JOptionPane.showMessageDialog(BiodataFrame.this, "Telepon belum terisi", "Perhatian",
                 JOptionPane.WARNING_MESSAGE);
     }
 
+    // Method untuk menampilkan alert ketika alamat kosong
     public void showAlertAddressEmpty() {
+        // Tampilkan message dialog pada komponen dari parameter 1 dan pesan pada parameter 2 dengan title pada parameter 3 dan jenis pesan pada parameter 4
         JOptionPane.showMessageDialog(BiodataFrame.this, "Alamat belum terisi", "Perhatian",
                 JOptionPane.WARNING_MESSAGE);
     }
 
+    // Method untuk menampilkan alert ketika data berhasil ditambahkan
     public void showAlertSuccess(String message) {
+        // Tampilkan message dialog pada komponen dari parameter 1 dan pesan pada parameter 2 dengan title pada parameter 3 dan jenis pesan pada parameter 4
         JOptionPane.showMessageDialog(BiodataFrame.this, "Data " + message, "Perhatian",
                 JOptionPane.INFORMATION_MESSAGE);
     }
 
+    // Method untuk menampilkan alert ketika data gagal ditambahkan
     public void showAlertFailed(String message) {
+        // Tampilkan message dialog pada komponen dari parameter 1 dan pesan pada parameter 2 dengan title pada parameter 3 dan jenis pesan pada parameter 4
         JOptionPane.showMessageDialog(BiodataFrame.this, "Data " + message, "Perhatian",
                 JOptionPane.ERROR_MESSAGE);
     }
 
+    // Method untuk menampilkan konfirmasi
     public int showConfirmation(String message) {
+        // Tampilkan message dialog pada komponen dari parameter 1 dan pesan pada parameter 2 dengan title pada parameter 3 dan jenis pesan pada parameter 4
         return JOptionPane.showConfirmDialog(BiodataFrame.this,
                 "Apakah anda yakin ingin " + message + " data?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
     }
