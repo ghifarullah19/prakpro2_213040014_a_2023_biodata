@@ -26,7 +26,7 @@ public class HapusActionListener implements ActionListener {
     int column = this.biodataFrame.getTable().getSelectedColumn();
 
     if (row == -1 || column == -1) {
-      this.biodataFrame.showAlertFailed("dihapus");
+      this.biodataFrame.showAlertFailed("tidak ada yang dihapus");
       return;
     } else {
       // Variable newValue untuk menyimpan nilai dari table yang diedit

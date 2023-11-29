@@ -6,7 +6,7 @@ import java.sql.DriverManager;
 // Class MySqlConnection untuk menghubungkan aplikasi dengan database
 public class MySqlConnection {
     // Variable DB_URL untuk menyimpan nilai url database
-    private final static String DB_URL = "jdbc:mysql://localhost:3306/biodata";
+    private final static String DB_URL = "jdbc:mysql://localhost:3306/pp2_biodata";
     // Variable DB_USER untuk menyimpan nilai username database
     private final static String DB_USER = "root";
     // Variable DB_PASS untuk menyimpan nilai password database

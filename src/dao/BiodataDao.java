@@ -120,7 +120,7 @@ public class BiodataDao {
                 Statement statement = connection.createStatement();) {
 
             // Membuat ResultSet untuk menyimpan hasil dari eksekusi query
-            try (ResultSet resultSet = statement.executeQuery("select * from biodata")) {
+            try (ResultSet resultSet = statement.executeQuery("select * from biodata order by nama asc")) {
                 // Looping untuk mengambil semua data dari database
                 while (resultSet.next()) {
                     // Membuat object biodata untuk menyimpan data

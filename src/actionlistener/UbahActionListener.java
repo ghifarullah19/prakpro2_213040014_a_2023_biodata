@@ -22,6 +22,11 @@ public class UbahActionListener implements ActionListener {
         // Variable column untuk menyimpan nilai kolom yang dipilih
         int column = this.biodataFrame.getTable().getSelectedColumn();
 
+        if (row == -1 || column == -1) {
+            this.biodataFrame.showAlertFailed("tidak ada yang diubah");
+            return;
+        }
+
         // Variable biodataUbah untuk menyimpan nilai dari table yang diedit
         String biodataUbah = (String) this.biodataFrame.getTable().getModel().getValueAt(row, column);
 
