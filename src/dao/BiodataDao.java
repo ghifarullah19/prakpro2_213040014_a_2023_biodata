@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package dao;
 
 import db.MySqlConnection;
@@ -13,11 +9,6 @@ import java.sql.ResultSet;
 import java.util.List;
 import java.util.ArrayList;
 import biodata.Biodata;
-
-/**
- *
- * @author ghifarullah19
- */
 
 // Class BiodataDao untuk mengatur CRUD dari biodata
 public class BiodataDao {

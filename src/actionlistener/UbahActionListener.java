@@ -1,18 +1,8 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package actionlistener;
 
 import java.awt.event.*;
-
 import biodata.BiodataFrame;
 import dao.BiodataDao;
-
-/**
- *
- * @author ghifarullah19
- */
 
 // Implementasi ActionListener untuk button Ubah
 public class UbahActionListener implements ActionListener {

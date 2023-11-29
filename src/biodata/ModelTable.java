@@ -1,18 +1,7 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-// Pertemuan 8
-// Berada di package main > biodata
 package biodata;
 
 import javax.swing.table.*;
 import java.util.List;
-
-/**
- *
- * @author ghifarullah19
- */
 
 // Membuat class ModelTable yang mewarisi class AbstractTableModel untuk membuat model tabel
 public class ModelTable extends AbstractTableModel {

@@ -3,7 +3,6 @@ package actionlistener;
 import java.awt.event.*;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-
 import biodata.BiodataFrame;
 
 // Implementasi dari WindowAdapter untuk button Close

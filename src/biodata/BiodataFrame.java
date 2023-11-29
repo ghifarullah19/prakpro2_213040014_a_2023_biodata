@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package biodata;
 
 import javax.swing.*;
@@ -13,10 +9,6 @@ import actionlistener.UbahActionListener;
 import actionlistener.CloseWindowActionListener;
 import actionlistener.SaveToFileActionListener;
 
-/**
- *
- * @author ghifarullah19
- */
 public class BiodataFrame extends JFrame {
     private List<Biodata> biodataList; // Variable biodataList untuk menyimpan biodata
     private final JTextField textFieldNama; // Variable textFieldNama untuk menyimpan input nama
